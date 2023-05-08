@@ -1,10 +1,10 @@
 name,size
-toppop,-1
-toppop.employed,-1
+toppop,
+toppop.employed,
 toppop.employed.professional,3938
 toppop.employed.service,5000
 toppop.employed.army,1000
 toppop.employed.teacher,3500
 toppop.employed.dad,4500
-toppop.Unemployed,-1
+toppop.Unemployed,
 toppop.Unemployed.unemp,2500
