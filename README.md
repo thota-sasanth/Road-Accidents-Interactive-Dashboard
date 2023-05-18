@@ -20,7 +20,7 @@ You can find the demo of dashboard at this [YouTube Link](https://www.youtube.co
 <br>
 <br>
 <p align="center">
-  <img src="https://github.com/thota-sasanth/Road-Accidents-Interactive-Dashboard/blob/main/dashboard.png" width="600" height="500">
+  <img src="https://github.com/thota-sasanth/Road-Accidents-Interactive-Dashboard/blob/main/dashboard.png" width="1000" height="500">
 </p>
 <br>
 <br>
