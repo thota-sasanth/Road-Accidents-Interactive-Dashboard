@@ -21,8 +21,6 @@ You can find the demo of dashboard at this [YouTube Link](https://www.youtube.co
   <img src="https://github.com/thota-sasanth/Road-Accidents-Interactive-Dashboard/blob/main/dashboard.png" width="1000" height="500">
 </p>
 <br>
-<br>
-
 
 ## Data Preparation / Processing
 I used two datasets taken from Kaggle. 
@@ -36,7 +34,7 @@ This other dataset is a country wide accident dataset, which covers 49 states an
 accident data are collected from February 2016 to Dec 2021, using multiple APIs that
 provide streaming traffic incident (or event) data. 
 
-The above data has **2.8M+** accidents records. I applied different data processing techniques such as - data reduction, filtering only specific year data, null rows imputation, duplicates handling, columns standardization/encoding, plots for outlier detection and removal, feature extraction, merging two datasets, clustering data using Kmeans algorithm, etc.
+The above data has **2.8M+** accidents records. I applied different data processing techniques such as - data reduction, filtering only specific year data, null rows imputation, duplicates handling, columns standardization/encoding, plots for outlier detection and removal, feature extraction, merging two datasets, and clustering data using Kmeans algorithm.
 
 
 
@@ -55,7 +53,14 @@ Every chart is linked with every other chart with wide range of **interactions**
 <br>
 
 ## Findings
-As the dataset taken is very large, there are a lot of insights that can be gathered after playing around with the dashboard. Some of the major findings I came across using the intearctions and dashboard are - population has a high impact on accident rate; weekdays have most number of accidents compared against weekends; 8AM and 5PM are the peak times for accidents within a day; Juntion, Traffic Signal, and Crossings are the top 3 accidents prone POI (point of interest areas); high humidity in the early mornings leads to more number of accidents; counties with most accidents have higher office job population compared to service job population.
+As the dataset taken is very large, there are a lot of insights that can be gathered after playing around with the dashboard. Some of the major findings I came across using the intearctions and dashboard are - 
+
+* population has a high impact on accident rate
+* weekdays have most number of accidents compared against weekends
+* 8AM and 5PM are the peak times for accidents within a day
+* Juntion, Traffic Signal, and Crossings are the top 3 accidents prone POI (point of interest areas)
+* high humidity in the early mornings leads to more number of accidents
+* counties with most accidents have higher office job population compared to service job population.
 
 You can gather a lot more insights leveraging this custom-designed visual analytics dashboard.
 <br>
