@@ -16,8 +16,6 @@ across the United States. Another 1,593,390 crashes resulted in injuries and 3,6
 ## Dashboard in Action
 
 You can find the demo of dashboard at this [YouTube Link](https://www.youtube.com/watch?v=ouDgxJT0jHE) <br>
-
-<br>
 <br>
 <p align="center">
   <img src="https://github.com/thota-sasanth/Road-Accidents-Interactive-Dashboard/blob/main/dashboard.png" width="1000" height="500">
