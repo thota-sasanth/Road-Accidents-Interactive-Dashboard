@@ -1,5 +1,5 @@
 # Road-Accidents-Interactive-Dashboard
-This is a **custom-designed interactive visual analytics dashboard** for analyzing and visualizing the key factors involved in road accidents across **3000** U.S. Counties. The dashboard is built from scratch using HTML, CSS, JavaScript, D3JS, ReactJS, Python, and Flask. 
+This is a ***custom-designed interactive visual analytics dashboard*** for analyzing and visualizing the key factors involved in road accidents across **3000** U.S. Counties. The dashboard is built from scratch using HTML, CSS, JavaScript, D3JS, ReactJS, Python, and Flask. 
 
 ## Problem Statement & Background
 
