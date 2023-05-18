@@ -15,7 +15,7 @@ across the United States. Another 1,593,390 crashes resulted in injuries and 3,6
 
 ## Dashboard in Action
 
-You can find the demo of dashboard at this [YouTube Link](https://www.youtube.com/watch?v=ouDgxJT0jHE) <br>
+You can find the demo of the dashboard at this [YouTube Link](https://www.youtube.com/watch?v=ouDgxJT0jHE) <br>
 <br>
 <p align="center">
   <img src="https://github.com/thota-sasanth/Road-Accidents-Interactive-Dashboard/blob/main/dashboard.png" width="1000" height="500">
@@ -55,12 +55,12 @@ Every chart is linked with every other chart with wide range of **interactions**
 ## Findings
 As the dataset taken is very large, there are a lot of insights that can be gathered after playing around with the dashboard. Some of the major findings I came across using the intearctions and dashboard are - 
 
-* population has a high impact on accident rate
-* weekdays have most number of accidents compared against weekends
-* 8AM and 5PM are the peak times for accidents within a day
-* Juntion, Traffic Signal, and Crossings are the top 3 accidents prone POI (point of interest areas)
-* high humidity in the early mornings leads to more number of accidents
-* counties with most accidents have higher office job population compared to service job population.
+* **Population** has a high impact on accident rate
+* **Weekdays** have most number of accidents compared against weekends
+* **8AM** and **5PM** are the peak times for accidents within a day
+* **Juntion**, **Traffic Signal**, and **Crossings** are the top 3 accidents prone POI (point of interest areas)
+* **High humidity** in the early mornings leads to more number of accidents
+* Counties with most accidents have **higher office job population** compared to service job population.
 
 You can gather a lot more insights leveraging this custom-designed visual analytics dashboard.
 <br>
