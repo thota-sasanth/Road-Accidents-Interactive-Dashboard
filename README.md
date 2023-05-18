@@ -15,7 +15,13 @@ across the United States. Another 1,593,390 crashes resulted in injuries and 3,6
 
 ## Dashboard in Action
 
-You can find the demo of dashboard at this [YouTube Link](https://www.youtube.com/watch?v=ouDgxJT0jHE) - <br>
+You can find the demo of dashboard at this [YouTube Link](https://www.youtube.com/watch?v=ouDgxJT0jHE) <br>
+
+<br>
+<br>
+<p align="center">
+  <img src="https://github.com/thota-sasanth/Road-Accidents-Interactive-Dashboard/blob/main/dashboard.png" width="600" height="500">
+</p>
 <br>
 <br>
 
@@ -34,12 +40,7 @@ provide streaming traffic incident (or event) data.
 
 The above data has **2.8M+** accidents records. I applied different data processing techniques such as - data reduction, filtering only specific year data, null rows imputation, duplicates handling, columns standardization/encoding, plots for outlier detection and removal, feature extraction, merging two datasets, clustering data using Kmeans algorithm, etc.
 
-<br>
-<br>
-<p align="center">
-  <img src="https://github.com/thota-sasanth/Hand-Gesture-Recognition/blob/master/hand-data.png" width="600" height="500">
-</p>
-<br>
+
 
 ## Dashboard Implementation & Components
 I implemented the dashboard as in a client-server architecture. The dashboard consist of advanced charts - 
