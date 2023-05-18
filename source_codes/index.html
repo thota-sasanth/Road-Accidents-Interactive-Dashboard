@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html> 
+    <head>
+        <title>US Accidents Dashboard</title>
+        <script src="https://d3js.org/d3.v6.js"></script>
+        <script src="./script.js"></script>
+        <link rel="stylesheet" href="overlay.css">
+        <link rel="stylesheet" type="text/css" href="./parcoords.css">
+        <link rel="stylesheet" type="text/css" href="style.css">
+        <script src="./parcoords.standalone.js"></script>
+
+    </head>
+    <body>
+        <header >
+            <svg id="dashboard-header"></svg>
+            <div id="nodatadivbox" style="display: none;">NO DATA</div>
+            <button id="reset-button" style="position:absolute; left:10px;">Reset All</button>
+        </header>
+        
+        <div class="dashboard">
+
+            <div id="loading-map-overlay">
+                <div class="spinnermap"></div>
+                <p>Loading Plot...</p>
+            </div>
+
+            
+            <div id="mapslider" class="chart" style="width:589px; height: 45px"></div>
+            <div id="mapslidertitle" style="position: absolute; left:47px; top:52px">Severity</div>
+            
+            <div class="chart" id="mapchartdiv">
+                <div id="mapt">Accidents Map</div>
+                <div class="checkbox-container">
+                    <input type="checkbox" id="toggle-checkbox" class="checkbox-input">
+                    <label for="toggle-checkbox" class="checkbox-label">
+                      <span class="checkbox-icon"></span>
+                      <span class="checkbox-text">Show per capita</span>
+                    </label>
+                  </div>
+                <div id="mapchartc"></div>
+                <div id="mapleg"></div>
+            </div>
+                
+
+
+            <div id="loading-pcp-overlay">
+                <div class="spinnerpcp"></div>
+                <p>Loading Plot...</p>
+            </div>
+
+            <div id="weatherpcpchart" class="parcoords"></div>
+            <div id="weatherpcptitle" style="position: absolute; top: 67%; left: 30%; font-size: 12px; font-weight: bolder;"> Weather PCP </div>
+
+
+
+            <div id="radialbarchart" class="chart"></div>
+            <div id="radialbartitle" style="position: absolute; top: 67.5%; left: 87%; font-size: 12px; font-weight: bolder;"> POI </div>
+            <div id="poitooltipdiv" style="position: absolute; top:67.5; left: 87%"></div>
+            <svg id="poi_sidebar" style="position: absolute; top: 81.5%; left: 96%; font-size: 12px; font-weight: bolder;"></svg>
+
+            <div id="timeareachart" class="chart"></div>
+            <div id="timeareatooltipdiv" style="position: absolute; top:50px; left: 92.5%"></div>
+            <div id="timeareatitle" style="position: absolute; top: 304px; left: 67.5%; font-size: 12px; font-weight: bolder;"> Accidents by Hour</div>
+
+            <div id="treemapchart" class="chart">
+                <svg id="treemapchartsvg" width="400" height="234.95" style="margin-top: 15px;  margin-left: 7.5px;margin-right: 7.5px "></svg>
+                <div id="treemaptitle" style="position: absolute; top: -3px; left: 35%; font-size: 12px; font-weight: bolder;"> Employment TreeMap</div>
+            </div>
+            
+          </div>
+        
+            
+        <script>
+            
+            
+
+           
+
+            
+
+
+            function weatherpcpplot() { 
+                pcploadingOverlay.style.display = "flex";
+
+                var data2 = null
+                // console.log("entered pcp weather")
+            
+
+                d3.json(base_url+"/weatherpcpdata").then(function(data1) {
+
+                    if (data1["statuscode"] !== 1) {
+                        // console.log("no data");
+                    }
+                else {
+                
+                data2 = data1["weather_data"] 
+                
+
+                
+
+                d3.select("#weatherpcpchart").selectAll("*").remove(); 
+
+
+                if (temppcp_orderl.length != 0) {
+                    // console.log("entered")
+
+                var margin = {top: 30, right: 30, bottom: 100, left: 200};
+                var width = 520 
+                var height = 500 
+
+
+                
+                var desiredcolorder = temppcp_orderl
+
+                var newData = data2.map(function(d) {
+                    var obj = {};
+                    desiredcolorder.forEach(function(column) {
+                    obj[column] = d[column];
+                    });
+                    return obj;
+                });
+
+                
+
+                var colorlist = ["#FF5733","#098AD8","#1ABC9C","#3498DB","#8E44AD","#984ea3", '#FF5733',
+            "#8E44AD", "#1ABC9C", "#E74C3C"]
+
+                var colorScale = d3.scaleOrdinal()
+                                    .domain([0,1,2,3,4])
+                                    .range(colorlist);
+
+
+                var parcoords = ParCoords()("#weatherpcpchart") 
+                                    .data(newData)
+                                    .alpha(0.5)
+                                    .hideAxis(["clusterid"])
+                                    .composite("darker")
+                                    // .color("#3377ff") //color for parcoords
+                                    .color(function(d, i) { return colorScale(d["clusterid"]); })
+                                    .render()
+                                    .shadows()
+                                    .reorderable()
+                                    .brushMode("1D-axes");
+
+                
+                
+                parcoords.on('brush', function (d) {
+                    var map_forpcp = {}
+                    var selected_brushrange1 = parcoords.brushExtents();
+                    selected_brushrange = selected_brushrange1
+                    for (var key in selected_brushrange) {
+                        map_forpcp[key] = selected_brushrange[key]["selection"]["scaled"]
+                }
+                // console.log(map_forpcp)
+                filterdatareqpayload["pcpranges"] = map_forpcp
+                // console.log(filterdatareqpayload)
+                call_allfuncs(['weather'])
+                
+                });
+
+                
+                pcploadingOverlay.style.display = "none";
+                
+                } 
+            }
+                });
+
+            
+                
+            };
+        
+
+
+            
+            
+            function weekdaystackbar() {
+
+                var margin = {top: 18, right: 10, bottom: 18, left: 45}
+                var width = 440 - margin.left - margin.right
+                var height = 250- margin.top - margin.bottom
+
+                d3.json(base_url+"/weekdaystbardata").then(function(data1) 
+                {
+                    if (data1["statuscode"] !== 1) {
+                        console.log("no data");
+                    }
+                else {
+                    data2 = data1["weekday_data"]
+                    if (data2 === []) {
+                        console.log("empty data")
+                    }
+                    max_acc_val = parseInt(data1["max_acc_val"])
+                
+                    var subgroups = ['6am - 10am', '11am - 3pm', '4pm - 7pm', '8pm - 10pm', '11pm - 5am']
+
+                    var groups = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+
+                    d3.select("#stackbarchart").selectAll("*").remove(); 
+                    
+                    var svg = d3.select("#stackbarchart")
+                                .append("svg")
+                                    .attr("width", width + margin.left + margin.right)
+                                    .attr("height", height + margin.top + margin.bottom)
+                                    .attr("class", "sth")
+                                .append("g")
+                                    .attr("transform",`translate(${margin.left},${margin.top})`);
+                    
+                    var x = d3.scaleBand()
+                                .domain(groups)
+                                .range([0, width])
+                                .padding([0.2])
+
+                    svg.append("g")
+                        .attr("transform", `translate(0, ${height})`)
+                        .call(d3.axisBottom(x).tickSizeOuter(0));
+
+                    // console.log(max_acc_val)
+                    var y = d3.scaleLinear()
+                                .domain([0, max_acc_val + 10 ])
+                                .range([ height, 0 ]);
+
+                    svg.append("g")
+                        .call(d3.axisLeft(y));
+
+                    var color = d3.scaleOrdinal()
+                                    .domain(subgroups)
+                                    .range(['#FDB813','#7EB5D6','#F56C4E',"#6F9E76","#A95C9B"])
+
+                    var stackedData = d3.stack().keys(subgroups)(data2)
+
+                    
+                    
+                    var stackbartooltip = d3.select("#stackbartooltipdiv")
+                                            // .append("div")
+                                            .style("opacity", 0)
+                                            // .attr("class", "stackbartooltip")
+                                            .style("background-color", "lightblue")
+                                            // .style("border", "solid")
+                                            // .style("border-width", "1px")
+                                            .style("border-radius", "5px")
+                                            .style("padding", "1px")
+                                            .style("width", "122.5px")
+                                            .style("height", "40px")
+
+
+
+                    var mousemove = function(event, d) {
+                        var subgroupName = d3.select(this.parentNode).datum().key;
+                        var subgroupValue = d.data[subgroupName];
+                        stackbartooltip.html(" Time slot: " + subgroupName + "<br>" + " Accidents count: " + subgroupValue)
+                                .style("opacity", 1)
+                                .style("font-size", "12px")
+                                .style("left", (event.pageX + 20) + "px")
+                                .style("top", (event.pageY - 20) + "px") 
+
+                    stackbartooltip.style("left", (event.pageX + 20) + "px")
+                            .style("top", (event.pageY - 20) + "px")
+                    stackbartooltip
+
+                    d3.select(this).classed("hover", true);
+                    var currsmallbar= d3.select(this);
+
+                    svg.selectAll("rect")
+                        .style('fill-opacity',0.5)
+                    svg.selectAll(".hover")
+                        .style('fill-opacity',1)
+                    svg.selectAll(".clicke")
+                        .style('fill-opacity',1)
+
+                    currsmallbar.on("click", function(event, d) {
+                        // console.log("clicked bar", d)
+
+                        var isClicked = currsmallbar.classed("clicke");
+
+
+                        if (!isClicked) {
+                            currsmallbar.classed("clicke", true);
+                            // console.log("added to clicked")
+                            filterdatareqpayload['timedaylist'].push({"day": d.data.group, "time": subgroupName })
+                        } else {
+                            currsmallbar.classed("clicke", false);
+                            // console.log("added to unclicked")
+                            filterdatareqpayload['timedaylist'] = filterdatareqpayload['timedaylist'].filter(dict => dict.day !== d.data.group || dict.time !== subgroupName);
+                            
+                        } 
+
+                        // console.log(filterdatareqpayload)
+                        call_allfuncs(['week'])
+
+
+                
+                    })
+                    
+
+
+                    }
+
+                    const mouseleave = function(event, d) {
+                        stackbartooltip.style("opacity", 0)
+
+                        svg.selectAll(".hover").classed("hover", false);
+                        d3.select(this)
+                            .style('fill-opacity',0.5)
+                            .lower();
+                        if (svg.selectAll(".clicke").empty()) {
+                            svg.selectAll("rect")
+                                .style('fill-opacity',1)
+                                .raise();
+                        } else {
+                            svg.selectAll(".clicke")
+                                .style("fill-opacity", 1)
+                                .raise();
+                        }
+
+                    }
+
+                    svg.append("g")
+                        .selectAll("g")
+                        .data(stackedData)
+                        .join("g")
+                        .attr("fill", d => color(d.key))
+                        .selectAll("rect")
+                        .data(d => d)
+                        .join("rect")
+                            .attr("x", d =>  x(d.data.group))
+                            .attr("y", d => y(d[1]))
+                            .attr("height", d => y(d[0]) - y(d[1]))
+                            .attr("width",x.bandwidth())
+                            .attr("stroke", "grey")
+                        // .on("mouseover", mouseover)
+                        .on("mousemove", mousemove)
+                        .on("mouseleave", mouseleave)
+                        
+                }
+                    })
+
+                }
+
+            
+            
+
+
+            function treemapchart() {
+
+                d3.select("#treemapchartsvg").selectAll("*").remove();
+                var svg = d3.select("#treemapchartsvg");
+                var width = +svg.attr("width")
+                var height = +svg.attr("height");
+
+                var format1 = d3.format(",d");
+                var color = d3.scaleSequential([-1, 2], d3.interpolateMagma)
+
+                var stratify = d3.stratify()
+                                .id(function(d) { return d.name; })
+                                .parentId(function(d) {
+                                    var lastIndex = d.name.lastIndexOf(".");
+                                    if (lastIndex !== -1) {
+                                    return d.name.substring(0, lastIndex);
+                                    } else {
+                                    return null;
+                                    }
+                                });
+                
+                var treemap = d3.treemap()
+                        .size([width, height])
+                        .paddingOuter(3)
+                        .paddingTop(17)
+                        .paddingInner(1)
+                        .round(true);
+
+
+                d3.json(base_url+"/treemapchartdata").then(function(data1) { 
+                if (data1["statuscode"] !== 1) {
+                        console.log("no data");
+                    }
+                else {
+
+                    data2 = data1["treemap_data"]
+
+
+                    var root = stratify(data2)
+                                .sum(function(d) { return d.size; })
+                                .sort(function(a, b) { return  b.size - a.size; });
+
+                    treemap(root);
+
+                    var cell = svg
+                        .selectAll(".node")
+                        .data(root.descendants())
+                        .enter().append("g")
+                        .attr("transform", function(d) { return "translate(" + d.x0 + "," + d.y0 + ")"; })
+                        .attr("class", "node")
+                        .each(function(d) { d.node = this; })
+                        .on("mouseover", function (d) {
+                            cell.selectAll(".node rect").style("opacity", 0.5); 
+                            d3.select(this).select("rect").style("opacity", 1); hovered(true)})
+                        .on("mouseout", function (d) {cell.selectAll(".node rect").style("opacity", 1);});
+                    
+                    cell.append("rect")
+                        .attr("id", function(d) { return "rect-" + d.id; })
+                        .attr("width", function(d) { return d.x1 - d.x0; })
+                        .attr("height", function(d) { return d.y1 - d.y0; })
+                        .style("fill", function(d) { return color(d.depth); });
+
+                    cell.append("clipPath")
+                        .attr("id", function(d) { return "clip-" + d.id; })
+                        .append("use")
+                        .attr("xlink:href", function(d) { return "#rect-" + d.id + ""; });
+
+                    var label = cell.append("text")
+                        .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; });
+
+                    label
+                        .filter(function(d) { return d.children; })
+                        .selectAll("tspan")
+                        .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1).split(/(?=[A-Z][^A-Z])/g).concat("\xa0" + format1(d.value)); })
+                        .enter().append("tspan")
+                        .attr("x", function(d, i) { return i ? null : 4; })
+                        .attr("y", 13)
+                        .text(function(d) { return d; });
+
+                    label
+                        .filter(function(d) { return !d.children; })
+                        .selectAll("tspan")
+                        .data(function(d) { return d.id.substring(d.id.lastIndexOf(".") + 1).split(/(?=[A-Z][^A-Z])/g).concat(format1(d.value)); })
+                        .enter().append("tspan")
+                        .attr("x", 4)
+                        .attr("y", function(d, i) { return 13 + i * 10; })
+                        .text(function(d) { return d; });
+
+                    cell.append("title")
+                        .text(function(d) { return d.id + "\n" + format1(d.value); });
+
+            }
+                });
+            
+
+                function hovered(hover) {
+                    return function(d) {
+                        d3.selectAll(d.ancestors().map(function(d) { return d.node; }))
+                            .classed("node--hover", hover)
+                        .select("rect")
+                            .attr("width", function(d) { return d.x1 - d.x0 - hover; })
+                            .attr("height", function(d) { return d.y1 - d.y0 - hover; })
+                    };
+                }  
+                   
+            }
+
+
+            const callout = (g, value) => {
+            if (!value) return g.style("display", "none");
+
+            g.style("display", null)
+                .style("pointer-events", "none")
+                .style("font", "14px sans-serif");
+
+            const path = g
+                .selectAll("path")
+                .data([null])
+                .join("path")
+                .attr("fill", "white")
+                .attr("stroke", "black");
+
+            const text = g
+                .selectAll("text")
+                .data([null])
+                .join("text")
+                .call(text =>
+                text
+                    .selectAll("tspan")
+                    .data((value + "").split(/\n/))
+                    .join("tspan")
+                    .attr("x", 0)
+                    .attr("y", (d, i) => `${i * 1.1}em`)
+                    .style("font-weight", (_, i) => (i ? null : "bold"))
+                    .text(d => d)
+                );
+
+            const { x, y, width: w, height: h } = text.node().getBBox();
+
+            text.attr("transform", `translate(${-w / 2},${15 - y})`);
+            path.attr("d", `M${-w / 2 - 10},5H-5H${w / 2 + 10}v${h + 20}h-${w + 20}z`);
+            }
+
+            var statemap = null
+            var counties = null
+            var statemesh = null
+
+            d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/counties-albers-10m.json").then(function(us) {
+
+            statemap = new Map(topojson.feature(us, us.objects.states).features.map(d => [d.id, d]))
+            counties = topojson.feature(us, us.objects.counties)
+            statemesh = topojson.mesh(us, us.objects.states, (a, b) => a !== b) 
+
+            });
+
+
+            
+            var legtitle = "accidents count"
+            var chartc = null;
+            drawchoromap(mapboxchecked);
+
+            mapcheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                mapboxchecked = 1
+            } else {
+                mapboxchecked = 0
+            }
+            drawchoromap(mapboxchecked)
+            });
+
+            function drawchoromap(mapboxchecked) {
+
+                maploadingOverlay.style.display = "flex";
+
+                d3.json(base_url+"/map/"+mapboxchecked).then(function(data1) {
+                    if (data1["statuscode"] !== 1) {
+                        console.log("no data");
+                    }
+                else {
+                    data = data1["accident_rate_data"]
+                    pvals = data1["pvals"]
+
+                     
+
+                    chartc = ChoroplethZoomable(data, {
+                    id: d => d.CountyId,
+                    value: d => d.accident_rate,
+                    scale: d3.scaleThreshold,
+                    domain: pvals,
+                    range : ["#006837", "#1a9850", "#66bd63", "#fdae61", "#d7191c"],
+                    // range: ["green", "#74c476", "#c7e9c0",  "#fdae6b", "red"],
+
+                    title: (f, d) =>  { return `${f.properties.name}, ${statemap.get(f.id.slice(0, 2)).properties.name}\n${d?.accident_rate}`},
+                    features: counties,
+                    borders: statemesh,
+                    width: 975,
+                    height: 610,
+                    StrokeWidth: "10px",
+                    StrokeOpacity: 1})
+
+                    d3.select("#mapchartc").selectAll("*").remove();
+
+
+                    d3.select("#mapchartc")
+                        .append(() => chartc);
+
+                    if (mapboxchecked === 0) {
+                        legtitle = "accidents count"
+                    } else {
+                        legtitle = "accident per capita"
+                    }
+
+
+                    key = Legend(chartc.scales.color, {title: legtitle})
+                    d3.select("#mapleg").selectAll("*").remove();
+
+                    d3.select('#mapleg')
+                        .append(() => key);
+
+                    maploadingOverlay.style.display = "none";
+            }
+                });
+
+            }
+
+            
+  
+
+            function Legend(color, {
+                title,
+                tickSize = 4,
+                width = 400, 
+                height = 40 + tickSize,
+                marginTop = 18,
+                marginRight = 0,
+                marginBottom = 16 + tickSize,
+                marginLeft = 155,
+                ticks = width / 64,
+                tickFormat,
+                tickValues
+                } = {}) {
+
+                function ramp(color, n = 256) {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = n;
+                    canvas.height = 1;
+                    const context = canvas.getContext("2d");
+                    for (let i = 0; i < n; ++i) {
+                    context.fillStyle = color(i / (n - 1));
+                    context.fillRect(i, 0, 1, 1);
+                    }
+                    return canvas;
+                }
+
+                const svg = d3.create("svg")
+                    .attr("id", "mapleg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("viewBox", [0, 0, width, height])
+                    .style("overflow", "visible")
+                    .style("display", "block");
+
+                let tickAdjust = g => g.selectAll(".tick line").attr("y1", marginTop + marginBottom - height);
+                let x;
+
+                if (color.interpolate) {
+                    const n = Math.min(color.domain().length, color.range().length);
+
+                    x = color.copy().rangeRound(d3.quantize(d3.interpolate(marginLeft, width - marginRight), n));
+
+                    svg.append("image")
+                        .attr("x", marginLeft)
+                        .attr("y", marginTop)
+                        .attr("width", width - marginLeft - marginRight)
+                        .attr("height", height - marginTop - marginBottom)
+                        .attr("preserveAspectRatio", "none")
+                        .attr("xlink:href", ramp(color.copy().domain(d3.quantize(d3.interpolate(0, 1), n))).toDataURL());
+                }
+
+                else if (color.interpolator) {
+                    x = Object.assign(color.copy()
+                        .interpolator(d3.interpolateRound(marginLeft, width - marginRight)),
+                        {range() { return [marginLeft, width - marginRight]; }});
+
+                    svg.append("image")
+                        .attr("x", marginLeft)
+                        .attr("y", marginTop)
+                        .attr("width", width - marginLeft - marginRight)
+                        .attr("height", height - marginTop - marginBottom)
+                        .attr("preserveAspectRatio", "none")
+                        .attr("xlink:href", ramp(color.interpolator()).toDataURL());
+
+                    if (!x.ticks) {
+                    if (tickValues === undefined) {
+
+                        const n = Math.round(ticks + 1);
+                        tickValues = d3.range(n).map(i => d3.quantile(color.domain(), i / (n - 1)));
+                    }
+                    if (typeof tickFormat !== "function") {
+                        tickFormat = d3.format(tickFormat === undefined ? ",f" : tickFormat);
+                    }
+                    }
+                }
+
+                else if (color.invertExtent) {
+                    // console.log("in thresh")
+                    var thresholds
+                        = color.thresholds ? color.thresholds() 
+                        : color.quantiles ? color.quantiles() 
+                        : color.domain(); 
+
+                    const thresholdFormat
+                        = tickFormat === undefined ? d => d
+                        : typeof tickFormat === "string" ? d3.format(tickFormat)
+                        : tickFormat;
+
+
+                    x = d3.scaleLinear()
+                        .domain([-1, color.range().length - 1])
+                        .rangeRound([marginLeft, width - marginRight]);
+
+                    svg.append("g")
+                    .selectAll("rect")
+                    .data(color.range())
+                    .join("rect")
+                        .attr("x", (d, i) => x(i - 1))
+                        .attr("y", marginTop)
+                        .attr("width", (d, i) => x(i) - x(i - 1))
+                        .attr("height", height - marginTop - marginBottom)
+                        .attr("fill", d => d);
+
+                    tickValues = d3.range(thresholds.length);
+                    thresholds = thresholds.map((num) => parseFloat(num.toFixed(5)));
+                    tickFormat = i => thresholdFormat(thresholds[i], i);
+                    
+                }
+
+                else {
+                    x = d3.scaleBand()
+                        .domain(color.domain())
+                        .rangeRound([marginLeft, width - marginRight]);
+
+                    svg.append("g")
+                    .selectAll("rect")
+                    .data(color.domain())
+                    .join("rect")
+                        .attr("x", x)
+                        .attr("y", marginTop)
+                        .attr("width", Math.max(0, x.bandwidth() - 1))
+                        .attr("height", height - marginTop - marginBottom)
+                        .attr("fill", color);
+
+                    tickAdjust = () => {};
+                }
+
+
+                svg.append("g")
+                    .attr("transform", `translate(0,${height - marginBottom})`)
+                    .call(d3.axisBottom(x)
+                        .ticks(ticks, typeof tickFormat === "string" ? tickFormat : undefined)
+                        .tickFormat(typeof tickFormat === "function" ? tickFormat : undefined)
+                        .tickSize(tickSize)
+                        .tickValues(tickValues))
+                    
+                    .call(tickAdjust)
+                    .call(g => g.select(".domain").remove())
+                    .call(g => g.append("text")
+                        .attr("x", marginLeft)
+                        .attr("y", marginTop + marginBottom - height - 6)
+                        .attr("fill", "currentColor")
+                        .attr("text-anchor", "start")
+                        .attr("font-weight", "bold")
+                        .attr("class", "title")
+                        .text(title));
+
+                return svg.node();
+            }
+
+
+            function ChoroplethZoomable(data, {
+                id = d => d.id, 
+                value = () => undefined, 
+                title,
+                format, 
+                scale = d3.scaleSequential, 
+                domain,
+                range = d3.interpolateBlues,
+                width = 640,
+                height, 
+                projection, 
+                features, 
+                featureId = d => d.id,
+                borders, 
+                outline = projection && projection.rotate ? {type: "Sphere"} : null,
+                unknown = "#ccc", 
+                fill = "white", 
+                stroke = "black", 
+                strokeLinecap = "round", 
+                strokeLinejoin = "round", 
+                strokeWidth, 
+                strokeOpacity, 
+                } = {}) {
+ 
+                // console.log("entered")
+                const N = d3.map(data, id);
+                const V = d3.map(data, value).map(d => d == null ? NaN : +d);
+                
+                const Im = new d3.InternMap(N.map((id, i) => [id, i]));
+                const If = d3.map(features.features, featureId);
+                
+
+                if (domain === undefined) domain = d3.extent(V);
+                
+
+                const color = scale(domain, range);
+                if (unknown !== undefined) color.unknown(unknown);
+                
+
+                if (title === undefined) {
+                    format = color.tickFormat(100, format);
+                    title = (f, i) => `${f.properties.name}\n${format(V[i])}`;
+                } else if (title !== null) {
+                    const T = title;
+                    const O = d3.map(data, d => d);
+                    title = (f, i) => {  return T(f, O[i])};
+                    
+                }
+
+                if (height === undefined) {
+                    if (outline === undefined) {
+                    height = 400;
+                    } else {
+                    const [[x0, y0], [x1, y1]] = d3.geoPath(projection.fitWidth(width, outline)).bounds(outline);
+                    const dy = Math.ceil(y1 - y0), l = Math.min(Math.ceil(x1 - x0), dy);
+                    projection.scale(projection.scale() * (l - 1) / l).precision(0.2);
+                    height = dy;
+                    }
+                }
+
+                const path = d3.geoPath(projection);
+
+                const zoom = d3
+                    .zoom()
+                    .scaleExtent([1, 8])
+                    .translateExtent([[0, 0], [width, height]])
+                    .on("zoom", zoomed);
+
+                const svg = d3.create("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("viewBox", [0, 0, width, height])
+                    .attr("style", "max-width: 100%; height: auto; height: intrinsic;")
+                    .on("click", reset);
+                
+                const g = svg.append("g")
+                
+                if (outline != null) g.append("path")
+                    .attr("fill", fill)
+                    .attr("stroke", "currentColor")
+                    .attr("d", path(outline));
+
+                
+
+                g.selectAll("path")
+                    .data(features.features)
+                    .join("path")
+                    .attr("fill", (d, i) => color(V[Im.get(+If[i])]))
+                    .attr("d", path)
+                    .attr("class", "counties")
+                    .attr('vector-effect', 'non-scaling-stroke')
+                    // .on("click", clicked)
+                    .append("title")
+                    .text((d, i) => {
+                        return title(d, Im.get(+If[i])).toString();});
+
+
+                if (borders != null) g.append("path")
+                    .attr("pointer-events", "none")
+                    .attr("fill", "none")
+                    .attr("stroke", stroke)
+                    .attr("stroke-linecap", strokeLinecap)
+                    .attr("stroke-linejoin", strokeLinejoin)
+                    .attr("stroke-width", "1px")
+                    .attr("stroke-opacity", 1)
+                    .attr("d", path(borders));
+
+                svg.call(zoom);
+                var tooltip = svg.append("g");
+  
+                g.selectAll(".counties").on("touchmove mousemove", function(event, d) {
+                    const transform = d3.zoomTransform(svg.node());
+                    d3.select(this)
+                    .attr("stroke", "black")
+                    .attr("stroke-width", "2px")
+                    .raise();
+                    var currcounty = d3.select(this);
+
+                    d3.select(this).classed("hovered", true);
+
+                    d3.selectAll(".hovered")
+                    .style("fill-opacity", 1)
+                    .raise();
+
+                    g.selectAll(".counties:not(.hovered):not(.clicked)")
+                    .style("fill-opacity", 0.5)
+                    .lower();
+
+                    currcounty.on("click", function(event, d) {
+                        // console.log("clicked county", d)
+
+                        var isClicked = currcounty.classed("clicked");
+
+                        if (!isClicked) {
+                            currcounty.classed("clicked", true);
+                            filterdatareqpayload['countyidlist'].push(+d.id)
+
+                        } else {
+                            currcounty.classed("clicked", false);
+                            let indexToRemove = filterdatareqpayload['countyidlist'].indexOf(+d.id);
+                        if (indexToRemove !== -1) {
+                            filterdatareqpayload['countyidlist'].splice(indexToRemove, 1);
+                        }
+                        }
+
+                        call_allfuncs(['choro'])
+
+                    });
+                });
+
+                g.selectAll(".counties").on("touchend mouseleave", function() {
+
+                    d3.select(this)
+                        .attr("stroke-width", "null")
+                        .attr("stroke", "none")
+                        .lower();
+                    d3.selectAll(".hovered").classed("hovered", false);
+
+                    if (filterdatareqpayload['countyidlist'].length === 0) {
+                        g.selectAll(".counties")
+                            .style("fill-opacity", strokeOpacity)
+                            .lower();
+                    } else {
+                        d3.selectAll(".clicked")
+                            .style("fill-opacity", 1)
+                            .attr("stroke", "black")
+                            .attr("stroke-width", "2px")
+                            .raise();
+
+                        g.selectAll(".counties:not(.clicked)")
+                        .style("fill-opacity", 0.5)
+                        .lower();
+                        }
+                    tooltip.call(callout, null);
+                });
+  
+                function reset() {
+                    svg
+                    .transition()
+                    .duration(750)
+                    .call(
+                        zoom.transform,
+                        d3.zoomIdentity,
+                        d3.zoomTransform(svg.node()).invert([width / 2, height / 2])
+                    );
+                }
+
+                function zoomed(event) {
+                    const { transform } = event;
+                    g.attr("transform", transform);
+                    g.attr("stroke-width", 1 / transform.k);
+                }
+  
+                function updateData(newData) {
+                    tooltipData = newData;
+                }
+  
+                updateData(data)
+                
+                return Object.assign(svg.node(), {
+                    scales: {color},
+                    reset,
+                    callout,
+                    //clicked,
+                    zoomed,
+                    updateData, 
+                    //updateCircles 
+                });
+            }
+
+
+
+        </script>
+
+    </body>
+
+</html>
+
