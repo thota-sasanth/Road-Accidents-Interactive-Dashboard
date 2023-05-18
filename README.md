@@ -21,6 +21,7 @@ You can find the demo of the dashboard at this [YouTube Link](https://www.youtub
   <img src="https://github.com/thota-sasanth/Road-Accidents-Interactive-Dashboard/blob/main/dashboard.png" width="1000" height="500">
 </p>
 <br>
+
 ## Data Preparation / Processing
 I used two datasets taken from Kaggle. 
 
