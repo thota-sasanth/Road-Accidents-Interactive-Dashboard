@@ -55,12 +55,12 @@ Every chart is linked with every other chart with wide range of **interactions**
 ## Findings
 As the dataset taken is very large, there are a lot of insights that can be gathered after playing around with the dashboard. Some of the major findings I came across using the intearctions and dashboard are - 
 
-* **Population** has a high impact on accident rate
-* **Weekdays** have most number of accidents compared against weekends
-* **8AM** and **5PM** are the peak times for accidents within a day
-* **Juntion**, **Traffic Signal**, and **Crossings** are the top 3 accidents prone POI (point of interest areas)
-* **High humidity** in the early mornings leads to more number of accidents
-* Counties with most accidents have **higher office job population** compared to service job population.
+* **Population has a high impact on accident rate**
+* **Weekdays have most number of accidents compared against weekends**
+* **8AM and 5PM are the peak times for accidents within a day**
+* **Juntion, Traffic Signal, and Crossings are the top 3 accidents prone POI (point of interest areas)**
+* **High humidity in the early mornings leads to more number of accidents**
+* **Counties with most accidents have higher office job population compared to service job population**
 
 You can gather a lot more insights leveraging this custom-designed visual analytics dashboard.
 <br>
