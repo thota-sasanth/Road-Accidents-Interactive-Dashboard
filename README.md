@@ -49,7 +49,7 @@ I implemented the dashboard as in a client-server architecture. The dashboard co
 * Time Series Area Chart
 * Radial Bar Plot
 
-Every chart is linked with every other chart with wide range of **interactions**, **overlays**, **pop-ups**, and **brushings**. This way the user cna easily get a deeper level of details and gain better insights.
+Every chart is linked with every other chart with wide range of **interactions**, **overlays**, **pop-ups**, and **brushings**. This way the user can easily get a deeper level of details and gain better insights.
 <br>
 
 ## Findings
