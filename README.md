@@ -58,7 +58,7 @@ As the dataset taken is very large, there are a lot of insights that can be gath
 * **Population has a high impact on accident rate**
 * **Weekdays have most number of accidents compared against weekends**
 * **8AM and 5PM are the peak times for accidents within a day**
-* **Juntion, Traffic Signal, and Crossings are the top 3 accidents prone POI (point of interest areas)**
+* **Juntion, Traffic Signal, and Crossings are the top 3 accidents prone POI (point of interest) areas**
 * **High humidity in the early mornings leads to more number of accidents**
 * **Counties with most accidents have higher office job population compared to service job population**
 
