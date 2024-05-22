@@ -6,7 +6,7 @@ This is a ***custom-designed interactive visual analytics dashboard*** for analy
 To create a dynamic dashboard that can help people understand the factors influencing road accidents. <br>
 <br>
 According to a Forbes article, in 2020, a total of 35,766 fatal car accidents occurred on roadways
-across the United States. Another 1,593,390 crashes resulted in injuries and 3,621,681 caused property damage. That means a total of **5.2M+** collisions happened over the course of a single year. These numbers highlight the significant impact of road accidents on public safety and the urgent need for effective measures to prevent and reduce their occurrence. Through this dashboard, we try to answer the following questions :
+across the United States. Another 1,593,390 crashes resulted in injuries and 3,621,681 caused property damage. That means a total of **5.2M+** collisions happened over the course of a single year. These numbers highlight the significant impact of road accidents on public safety and the urgent need for effective measures to prevent and reduce their occurrence. Through this dashboard, let's try to answer the following questions :
 
 * Are road accidents influenced by temporal variables such as day and/or time?
 * Do POI (points-of-interest) locations contribute to road accidents in any way?
